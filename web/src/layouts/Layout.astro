@@ -7,7 +7,7 @@ interface Props {
 
 const { title } = Astro.props
 const description =
-  "Proyectos prácticos para aprender JavaScript con código fuente y vídeo. Totalmente gratis."
+  "Proyectos prácticos de JavaScript con código fuente y demo."
 ---
 
 <!doctype html>
@@ -16,7 +16,7 @@ const description =
     <title>{title}</title>
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
-    <meta name="author" content="Miguel Ángel Durán" />
+    <meta name="author" content="JIP" />
     <meta
       name="keywords"
       content="javascript, js, programación, desarrollo web"
@@ -32,11 +32,13 @@ const description =
   </head>
   <body>
     <slot />
+
     <style is:global>
       html {
         font-family: system-ui, sans-serif;
+        --tw-bg-opacity: 1;
+        background-color: rgb(75 85 99 / var(--tw-bg-opacity));;
       }
-
       code {
         font-family:
           Menlo,
@@ -49,5 +51,6 @@ const description =
           monospace;
       }
     </style>
+
   </body>
 </html>

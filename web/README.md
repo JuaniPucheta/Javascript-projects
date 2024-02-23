@@ -1,3 +1,6 @@
+# Basado en
+https://github.com/midudev/javascript-100-proyectos 
+
 # Astro Starter Kit: Basics
 
 ```sh
