@@ -13,7 +13,7 @@
                 <div class="choice nope">NOPE</div>
                 <div class="choice like">LIKE</div>
             </article>
-
+        
             <article>
                 <img src="./photos/jip.webp" alt="Juan Ignacio, un capo" />
                 <h2>Juan Ignacio <span>23</span></h2>
@@ -175,7 +175,7 @@
             }
 
             &.go-left, &.go-right {
-                transition: transform .3s ease, rotate .3s ease;
+                transition: transform .6s ease, rotate .6s ease;
             }
 
             &.reset {
@@ -252,11 +252,12 @@
     let isAnimating = false
     let pullDeltaX = 0 // distancia que la card se esta arrastrando
     
-    function startDrag (e) {
+    function startDrag (event) {
         if (isAnimating) return
 
         // get the first article element 
         const actualCard = event.target.closest('article') // recupero el article mas cercano al click
+        
         if(!actualCard) return // si no hay article, no hago nada
 
         // get initial position of mouse or finger
@@ -344,4 +345,50 @@
 
     document.addEventListener('mousedown', startDrag)
     document.addEventListener('touchstart', startDrag, { passive: true })
+
+
+    // Función para obtener el primer artículo visible en pantalla
+    function getFirstVisibleCard() {
+        const allCards = document.querySelectorAll('.cards article');
+        let firstVisibleCard = null;
+
+        // Iterar sobre todas las tarjetas para encontrar la primera visible
+        allCards.forEach(card => {
+            const rect = card.getBoundingClientRect();
+            if (rect.left >= 0 && rect.right <= window.innerWidth) {
+                firstVisibleCard = card;
+                return; // Salir del bucle una vez que se encuentra la primera tarjeta visible
+            }
+        });
+
+        return firstVisibleCard;
+    }
+
+    // Función para eliminar la tarjeta
+    function removeCard() {
+        const actualCard = getFirstVisibleCard();
+        if (!actualCard) return;
+
+        actualCard.classList.add('go-left');
+        actualCard.addEventListener('transitionend', () => {
+            actualCard.remove();
+        }, { once: true });
+    }
+
+    // Función para marcar la tarjeta como favorita
+    function favCard() {
+        const actualCard = getFirstVisibleCard();
+        if (!actualCard) return;
+
+        actualCard.classList.add('go-right');
+        actualCard.addEventListener('transitionend', () => {
+            actualCard.remove();
+        }, { once: true });
+    }
+
+    // Asignar event listeners a los botones remove y fav
+    document.querySelector('.is-remove').addEventListener('click', removeCard);
+    document.querySelector('.is-fav').addEventListener('click', favCard);
+
+
 </script>
