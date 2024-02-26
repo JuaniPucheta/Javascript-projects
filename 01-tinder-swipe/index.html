@@ -175,7 +175,7 @@
             }
 
             &.go-left, &.go-right {
-                transition: transform .6s ease, rotate .6s ease;
+                transition: transform .9s ease, rotate .9s ease;
             }
 
             &.reset {
@@ -197,7 +197,7 @@
                 font-weight: bold;
                 width: fit-content;
                 text-shadow: 0 0 10px rgba(0, 0, 0, .3);
-                transition: opacity .1s ease, transform .1s ease;
+                transition: opacity .9s ease, transform .9s ease;
 
                 &.nope {
                     border-color: #ff6b6b;
@@ -364,6 +364,23 @@
         return firstVisibleCard;
     }
 
+    // Función para actualizar la visibilidad de los botones NOPE y LIKE
+    function updateChoiceButtons(card, action) {
+        const choiceNope = card.querySelector('.choice.nope');
+        const choiceLike = card.querySelector('.choice.like');
+
+        // Si se hizo clic en "remove", mostrar solo NOPE y ocultar LIKE
+        if (action === 'remove') {
+            choiceNope.style.opacity = 1;
+            choiceLike.style.opacity = 0;
+        }
+        // Si se hizo clic en "fav", mostrar solo LIKE y ocultar NOPE
+        else if (action === 'fav') {
+            choiceNope.style.opacity = 0;
+            choiceLike.style.opacity = 1;
+        }
+    }
+
     // Función para eliminar la tarjeta
     function removeCard() {
         const actualCard = getFirstVisibleCard();
@@ -373,6 +390,9 @@
         actualCard.addEventListener('transitionend', () => {
             actualCard.remove();
         }, { once: true });
+
+        // Actualizar los estilos de los botones NOPE y LIKE
+        updateChoiceButtons(actualCard, 'remove');
     }
 
     // Función para marcar la tarjeta como favorita
@@ -384,11 +404,13 @@
         actualCard.addEventListener('transitionend', () => {
             actualCard.remove();
         }, { once: true });
+
+        // Actualizar los estilos de los botones NOPE y LIKE
+        updateChoiceButtons(actualCard, 'fav');
     }
 
     // Asignar event listeners a los botones remove y fav
     document.querySelector('.is-remove').addEventListener('click', removeCard);
     document.querySelector('.is-fav').addEventListener('click', favCard);
-
 
 </script>
