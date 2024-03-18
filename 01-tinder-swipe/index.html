@@ -36,7 +36,10 @@
             <button class="is-zap" aria-label="zap"></button>
         </footer>
     </section>
+    
 </main>
+
+<div class="match-banner">MATCH</div>
 
 <style>
     *, *::before, *::after {
@@ -204,6 +207,7 @@
                     border-color: #ff6b6b;
                     color: #ff6b6b;
                     transform: rotate(30deg);
+                    transition: opacity .4s ease, transform .4s ease;
                 }
                 
                 &.like {
@@ -211,6 +215,7 @@
                     color: #63ff68;
                     left: 16px;
                     transform: rotate(-30deg);
+                    transition: opacity .4s ease, transform .4s ease;
                 }
             }
 
@@ -245,9 +250,53 @@
             }
         }
     }
+
+    .match-banner {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: green;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-style: italic;
+        font-weight: bold;
+        font-size: 24px;
+        z-index: 999;
+        display: none; /* Comienza oculto */
+    }
 </style>
 
+<script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
+
 <script>
+    // Variable para contar los clics en el botón de LIKE
+    let likeClicks = 0;
+
+    // Función para manejar los clics en el botón de LIKE
+    function handleLike(event) {
+        // Incrementar el contador de clics en el botón de LIKE
+        likeClicks++;
+
+        // Verificar si se han realizado dos clics en el botón de LIKE
+        if (likeClicks === 2) {
+            // Mostrar el banner de "MATCH"
+            const matchBanner = document.querySelector('.match-banner');
+            matchBanner.style.display = 'block';
+
+            // Activar el confeti
+            const jsConfetti = new JSConfetti();
+            jsConfetti.addConfetti();
+        }
+    }
+
+    // Obtener el botón de LIKE
+    const likeButton = document.querySelector('.is-fav');
+
+    // Asignar evento de clic al botón de LIKE
+    likeButton.addEventListener('click', handleLike);
+
     const DECISION_THRESHOLD = 75 // distancia minima para tomar una decision
 
     let isAnimating = false
