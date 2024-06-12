@@ -21,4 +21,18 @@ export const PROJECTS = [
       "RequestAnimationFrame"
     ],
   },
+  {
+    slug: "03-typing-game",
+    title: "Reto de Mecanografía",
+    description: "Juego de mecanografia, escribe las palabras antes de que se acabe el tiempo",
+    learnings: [
+      "DOM",
+      "Eventos de teclado",
+      "Manejo de clases",
+      "Optimización selectores"
+    ],
+    theme: {
+      isDark: true
+    }
+  },
 ]
