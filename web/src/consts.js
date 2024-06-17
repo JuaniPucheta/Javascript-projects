@@ -35,4 +35,19 @@ export const PROJECTS = [
       isDark: true
     }
   },
+  {
+    slug: "XX-api-geo-ip",
+    hidden: true,
+    title: "Buscar info de IP",
+    description: "Llama a una API para obtener información de IP",
+    learnings: [
+      "Fetch API",
+      "Formularios",
+      "Asincronía"
+    ],
+    theme: {
+      isDark: false
+    },
+    youtube: "https://www.youtube.com/watch?v=6AMKwVcpYTk"
+  }
 ]
