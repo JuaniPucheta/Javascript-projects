@@ -36,6 +36,19 @@ export const PROJECTS = [
     }
   },
   {
+    slug: "04-chatgpt-local",
+    title: "ChatGPT local",
+    description: "IA de forma local, gratis y privada.",
+    learnings: [
+      "Web Workers",
+      "IA",
+      "ESModules"
+    ],
+    theme: {
+      isDark: false
+    }
+  },
+  {
     slug: "XX-api-geo-ip",
     hidden: true,
     title: "Buscar info de IP",
@@ -47,7 +60,6 @@ export const PROJECTS = [
     ],
     theme: {
       isDark: false
-    },
-    youtube: "https://www.youtube.com/watch?v=6AMKwVcpYTk"
+    }
   }
 ]
