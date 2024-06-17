@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ChatGPT Local 100% privado</title>
+  <title>ChatGPT Local 100% privado, gratis y maravilloso</title>
 
   <style>
     body {
@@ -64,14 +65,18 @@
       &.user {
         align-self: flex-end;
         align-items: flex-end;
-        span, p {
+
+        span,
+        p {
           background: rgb(219, 236, 255);
         }
       }
 
       &.bot {
         align-self: flex-start;
-        span, p {
+
+        span,
+        p {
           background: rgb(198, 255, 220);
         }
       }
@@ -120,17 +125,59 @@
       margin: auto;
       width: 400px;
     }
+
+    .loading {
+      text-align: center;
+      display: flex;
+      height: 100%;
+      align-items: center;
+      flex-direction: column;
+      margin-top: 50%;
+
+      i {
+        pointer-events: none;
+        width: 2.5em;
+        height: 2.5em;
+        border: 0.4em solid transparent;
+        border-color: #eee;
+        border-top-color: #3E67EC;
+        border-radius: 50%;
+        animation: loadingspin 1s linear infinite;
+      }
+
+      h4 {
+        color: #444;
+        margin-bottom: 8px;
+      }
+
+      h5 {
+        font-weight: 400;
+        margin: 0;
+        font-size: 10px;
+        opacity: .4;
+      }
+    }
+
+    @keyframes loadingspin {
+      100% {
+        transform: rotate(360deg)
+      }
+    }
   </style>
 
-<script type="module">
-    // module => import, export (podemos usar) para JS vanilla
+  <script type="module">
+    /* 
+        antes use "https://esm.run/@mlc-ai/web-llm"
+        el problema es que eso siempre es la versión más reciente
+        en el código uso https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.46/+esm
+        para fijar la versión 
+    */
+    import { CreateWebWorkerMLCEngine } from "https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.46/+esm"
 
-    import { CreateWebWorkerMLCEngine } from "https://esm.run/@mlc-ai/web-llm"
+    const $ = el => document.querySelector(el)
 
     // pongo delante de la variable un símbolo de $
     // para indicar que es un elemento del DOM
-    const $ = el => document.querySelector(el)
-
     const $form = $('form')
     const $input = $('input')
     const $template = $('#message-template')
@@ -138,19 +185,25 @@
     const $container = $('main')
     const $button = $('button')
     const $info = $('small')
+    const $loading = $('.loading')
 
     let messages = []
+    let end = false
 
     const SELECTED_MODEL = 'Llama-3-8B-Instruct-q4f32_1-MLC-1k'
 
     const engine = await CreateWebWorkerMLCEngine(
-      new Worker('/worker.js', { type: 'module' }),
+      new Worker('./worker.js', { type: 'module' }),
       SELECTED_MODEL,
       {
         initProgressCallback: (info) => {
-          $info.textContent = `${info.text}%`
-          if (info.progress === 1) {
+          $info.textContent = info.text
+          if (info.progress === 1 && !end) {
+            end = true
+            $loading?.parentNode?.removeChild($loading)
             $button.removeAttribute('disabled')
+            addMessage("¡Hola! Soy un ChatGPT que se ejecuta completamente en tu navegador. ¿En qué puedo ayudarte hoy?", 'bot')
+            $input.focus()
           }
         }
       }
@@ -219,9 +272,16 @@
     }
   </script>
 </head>
+
 <body>
   <main>
-    <ul></ul>
+    <ul>
+      <li class="loading">
+        <i></i>
+        <h4>Cargando...</h4>
+        <h5>Esto puede tardar un poco. Paciencia.</h5>
+      </li>
+    </ul>
   </main>
 
   <form>
@@ -238,4 +298,5 @@
     </li>
   </template>
 </body>
+
 </html>
