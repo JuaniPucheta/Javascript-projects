@@ -1,4 +1,7 @@
-# Para subirlo a la Web
+# Para subirlo a la Web 
+> [!NOTE]
+> La branch utilizada es **MAIN**
+
 1. Voy a web/src/consts.js donde replico en el JSON el siguiente proyecto
 2. Ir a shots.so para obtener la imagen para subir a la web
 3. Ir a squoo.sh para obtener la imagen optimizada con formato webp
