@@ -1,3 +1,16 @@
+# Para subirlo a la Web
+1. Voy a web/src/consts.js donde replico en el JSON el siguiente proyecto
+2. Ir a shots.so para obtener la imagen para subir a la web
+3. Ir a squoo.sh para obtener la imagen optimizada con formato webp
+4. ir a web/public/projects y arrojar la imagen xx.webp
+5. En una consola
+```sh
+cd web
+pnpm run 
+pnpm run prepare
+```
+6. Subir cambios a github
+
 # Basado en
 https://github.com/midudev/javascript-100-proyectos 
 
