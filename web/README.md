@@ -7,6 +7,7 @@
 ```sh
 cd web
 pnpm run 
+pnpm run build
 pnpm run prepare
 ```
 6. Subir cambios a github
