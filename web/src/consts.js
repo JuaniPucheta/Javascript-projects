@@ -50,7 +50,6 @@ export const PROJECTS = [
   },
   {
     slug: "05-api-geo-ip",
-    hidden: true,
     title: "Buscar info de IP",
     description: "Llama a una API para obtener información de IP",
     learnings: [
