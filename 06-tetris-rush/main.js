@@ -1,12 +1,13 @@
 import './style.css'
+import { BOARD_HEIGHT, BOARD_WIDTH, BLOCK_SIZE, EVENT_MOVEMENTS } from './consts.js'
 
 // 1. Inicializar el canvas
 const canvas = document.querySelector('canvas')
 const context = canvas.getContext('2d')
 
-const BLOCK_SIZE = 20
-const BOARD_WIDTH = 14
-const BOARD_HEIGHT = 30
+const $score = document.querySelector('span')
+
+let score = 0
 
 canvas.width = BLOCK_SIZE * BOARD_WIDTH
 canvas.height = BLOCK_SIZE * BOARD_HEIGHT
@@ -14,38 +15,11 @@ canvas.height = BLOCK_SIZE * BOARD_HEIGHT
 context.scale(BLOCK_SIZE, BLOCK_SIZE)
 
 // 3. board
-const board = [
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1]
-]
+const board = createBoard(BOARD_WIDTH, BOARD_HEIGHT)
+
+function createBoard (width, height) {
+  return Array(height).fill().map(() => Array(width).fill(0))
+}
 
 //4. pieza
 const piece = {
@@ -55,6 +29,35 @@ const piece = {
     [1, 1]
   ]
 }
+
+// 9. random pieces
+const PIECES = [
+  [
+    [1, 1],
+    [1, 1]
+  ],
+  [
+    [1, 1, 1, 1],
+  ],
+  [
+    [0, 1, 0],
+    [1, 1, 1]
+  ],
+  [
+    [1, 1, 0],
+    [0, 1, 1]
+  ],
+  [
+    [1, 0],
+    [1, 0],
+    [1, 1],
+  ],
+  [
+    [0, 1],
+    [0, 1],
+    [0, 1],
+  ]
+]
 
 // 2. game loop
 // function update () {
@@ -108,29 +111,50 @@ function draw () {
       }
     })
   }) 
+
+  $score.innerText = score
 }
 
 document.addEventListener('keydown', event => {
-  if (event.key === 'ArrowLeft') {
+  if (event.key === EVENT_MOVEMENTS.LEFT) {
     piece.position.x--
     if (checkCollision()) {
       piece.position.x++
     }
   }
 
-  if (event.key === 'ArrowRight') {
+  if (event.key === EVENT_MOVEMENTS.RIGHT) {
     piece.position.x++
     if (checkCollision()) {
       piece.position.x--
     }
   }
   
-  if (event.key === 'ArrowDown') {
+  if (event.key === EVENT_MOVEMENTS.DOWN) {
     piece.position.y++
     if (checkCollision()) {
       piece.position.y--
       solidyPiece()
       removeRows()
+    }
+  }
+
+  if (event.key === 'ArrowUp') {
+    const rotated = []
+    
+    for (let i = 0; i < piece.shape[0].length; i++) {
+      rotated.push([])
+
+      for (let j = 0; j < piece.shape.length; j++) {
+        rotated[i].unshift(piece.shape[j][i])
+      }
+    }
+
+    const previousShape = piece.shape
+    piece.shape = rotated
+
+    if (checkCollision()) {
+      piece.shape = previousShape
     }
   }
 })
@@ -147,32 +171,53 @@ function checkCollision () {
 }
 
 function solidyPiece () {
-  piece.shape.forEach((row, x) => {
-    row.forEach((value, y) => {
+  piece.shape.forEach((row, y) => {
+    row.forEach((value, x) => {
       if (value === 1) {
         board[y + piece.position.y][x + piece.position.x] = 1
       }
     })
   })
 
-  piece.position.x = 0
+  // reset position
+  piece.position.x = Math.floor(BOARD_WIDTH / 2 - 2)
   piece.position.y = 0
+
+  // get random shape
+  piece.shape = PIECES[Math.floor(Math.random() * PIECES.length)]
+
+  // game over
+  if (checkCollision()) {
+    window.alert('Game Over! 😭')
+    board.forEach(row => row.fill(0))
+  }
 }
 
 function removeRows () {
-  const rowsToMove = []
+  const rowsToRemove = []
 
   board.forEach((row, y) => {
     if (row.every(value => value === 1)) {
-      rowsToMove.push(y)
+      rowsToRemove.push(y)
     }
   })
 
-  rowsToMove.forEach(y => {
+  rowsToRemove.forEach(y => {
     board.splice(y, 1)
     const newRow = Array(BOARD_WIDTH).fill(0)
     board.unshift(newRow)
+    score += 10
   })
 }
 
-update()
+const $section = document.querySelector('section')
+
+$section.addEventListener('click', () => {
+  update()
+  
+  $section.remove()
+  const audio = new Audio('public/tetris.mp3')
+  audio.volume = 0.1
+  audio.play()
+})
+
