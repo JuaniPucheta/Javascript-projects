@@ -1,4 +1,3 @@
-import './style.css'
 import { BOARD_HEIGHT, BOARD_WIDTH, BLOCK_SIZE, EVENT_MOVEMENTS } from './consts.js'
 
 // 1. Inicializar el canvas
