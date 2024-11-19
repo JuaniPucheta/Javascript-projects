@@ -13,7 +13,9 @@ pnpm run
 pnpm run build
 pnpm run prepare
 ```
-6. Subir cambios a github
+6. Modificar el *README.md* padre.
+7. Chequear los index.html dentro del a carpeta src/web/dist porque a veces no se actualiza.
+8. Subir cambios a github
 
 # Basado en
 https://github.com/midudev/javascript-100-proyectos 
