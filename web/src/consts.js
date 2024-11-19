@@ -63,7 +63,7 @@ export const PROJECTS = [
     }
   },
   {
-    slug: "06-tetris.rush",
+    slug: "06-tetris-rush",
     hidden: false,
     title: "Tetris Rush Game",
     description: "Juego de Tetris con puntaje! Controla con las flechitas del teclado",
