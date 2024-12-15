@@ -74,5 +74,20 @@ export const PROJECTS = [
     theme: {
       isDark: false
     }
+  },
+  {
+    slug: "07-tier-maker",
+    hidden: false,
+    title: "Tier Maker",
+    description: "Creador de Tier List con Drag and Drop",
+    learnings: [
+      "Drag and Drop",
+      "Eventos de mouse",
+      "DOM",
+      "Canvas",
+    ],
+    theme: {
+      isDark: false
+    }
   }
 ]
