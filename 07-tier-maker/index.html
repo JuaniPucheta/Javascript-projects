@@ -129,6 +129,12 @@
             height: 100px;
             margin-bottom: 100px;
             display: flex;
+            flex-wrap: wrap;
+
+            &.drag-files {
+                background: #555;
+                border-style: dashed;
+            }
         }
 
         .item-image {
@@ -200,6 +206,30 @@
         itemsSection.addEventListener('dragover', handleDragOver)
         itemsSection.addEventListener('dragleave', handleDragLeave)
 
+        itemsSection.addEventListener('drop', handleDropFromDesktop)
+        itemsSection.addEventListener('dragover', handleDragOverFromDesktop)
+
+        function handleDragOverFromDesktop (event) {
+            event.preventDefault()
+
+            const { currentTarget, dataTransfer } = event
+
+            if (dataTransfer.types.includes('Files')) {
+                currentTarget.classList.add('drag-files')
+            }
+        }
+
+        function handleDropFromDesktop (event) {
+            event.preventDefault()
+            const { currentTarget, dataTransfer } = event
+
+            if (dataTransfer.types.includes('Files')) {
+                currentTarget.classList.remove('drag-files')
+                const { files } = dataTransfer
+                useFilesToCreateItems(files)
+            }
+        }
+
         function handleDrop (event) {
             event.preventDefault()
             
@@ -258,7 +288,7 @@
 
         resetButton.addEventListener('click', () => {
             const items = $$('.tier .item-image')
-            
+
             items.forEach(item => {
                 item.remove()
                 itemsSection.appendChild(item)
