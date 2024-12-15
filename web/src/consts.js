@@ -31,9 +31,6 @@ export const PROJECTS = [
       "Manejo de clases",
       "Optimización selectores"
     ],
-    theme: {
-      isDark: true
-    }
   },
   {
     slug: "04-chatgpt-local",
@@ -44,13 +41,9 @@ export const PROJECTS = [
       "IA",
       "ESModules"
     ],
-    theme: {
-      isDark: false
-    }
   },
   {
     slug: "05-api-geo-ip",
-    hidden: false,
     title: "Buscar info de IP",
     description: "Llama a una API para obtener información de IP",
     learnings: [
@@ -58,22 +51,15 @@ export const PROJECTS = [
       "Formularios",
       "Asincronía"
     ],
-    theme: {
-      isDark: false
-    }
   },
   {
     slug: "06-tetris-rush",
-    hidden: false,
     title: "Tetris Rush Game",
     description: "Juego de Tetris con puntaje! Controla con las flechitas del teclado",
     learnings: [
       "Canvas",
       "Eventos de teclado",
     ],
-    theme: {
-      isDark: false
-    }
   },
   {
     slug: "07-tier-maker",
@@ -83,7 +69,6 @@ export const PROJECTS = [
     learnings: [
       "Drag and Drop",
       "Eventos de mouse",
-      "DOM",
       "Canvas",
     ],
     theme: {
