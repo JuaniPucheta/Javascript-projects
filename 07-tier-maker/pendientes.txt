@@ -1,0 +1,4 @@
+1. Guardar en localStorage los datos de los pendientes. No solo guardarlos, sino recuperarlos.
+2. Tener tier list ya preparados. Por ejemplo "vota los mejores" y al darle click, que aparezcan: los mejores lenguajes, juegos, etc.
+3. Filtrar por formato. Si alguien intenta arrastrar algo que no sea img (agregar validaciones).
+4. Agregar un botón para borrar todos los elementos y resetear la lista.
