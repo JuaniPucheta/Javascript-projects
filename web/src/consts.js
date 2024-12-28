@@ -63,13 +63,24 @@ export const PROJECTS = [
   },
   {
     slug: "07-tier-maker",
-    hidden: false,
     title: "Tier Maker",
     description: "Creador de Tier List con Drag and Drop",
     learnings: [
       "Drag and Drop",
       "Eventos de mouse",
       "Canvas",
+    ],
+  },
+  {
+    slug: "08-excel-js",
+    hidden: false,
+    title: "Hojas de Cálculo JS",
+    description: "¡Excel sin dependencias y funcional!",
+    learnings: [
+      "Tablas",
+      "Eval",
+      "Structured Clone",
+      "Eventos de teclado"
     ],
     theme: {
       isDark: false
