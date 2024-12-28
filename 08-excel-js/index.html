@@ -95,6 +95,8 @@
 
             newState[x][y] = cell
 
+            computeAllCells(newState, generateCellsConstants(newState)) // llamamos de nuevo a generateCellsConstants para que se actualice el valor de las celdas con las nuevas constantes
+
             STATE = newState
 
             renderSpreadSheet()
@@ -102,16 +104,26 @@
 
         function generateCellsConstants (cells) {
             return cells.map((rows, x) => {
-            return rows.map((cell, y) => {
-                const letter = getColumn(x) // -> A, B, C, D, E
-                const cellIdUpper = `${letter}${y + 1}` // -> A1, B1, C1, D1, E1
-                const cellIdLower = `${letter.toLowerCase()}${y + 1}` // -> a1, b1, c1, d1, e1
-                return `const ${cellIdUpper} = ${cell.computedValue}; const ${cellIdLower} = ${cell.computedValue};` // -> const A1 = 0; const a1 = 0;
-            }).join('\n')
+                return rows.map((cell, y) => {
+                    const letter = getColumn(x) // -> A, B, C, D, E
+                    const cellIdUpper = `${letter}${y + 1}` // -> A1, B1, C1, D1, E1
+                    const cellIdLower = `${letter.toLowerCase()}${y + 1}` // -> a1, b1, c1, d1, e1
+                    return `const ${cellIdUpper} = ${cell.computedValue}; const ${cellIdLower} = ${cell.computedValue};` // -> const A1 = 0; const a1 = 0;
+                }).join('\n')
             }).join('\n')
         }
 
+        function computeAllCells (cells, constants) {
+            cells.forEach((rows, x) => {
+                rows.forEach((cell, y) => {
+                    const computedValue = computeValue(cell.value, constants)
+                    cell.computedValue = computedValue
+                })
+            })
+        }
+
         function computeValue (value, constants) {
+            if (typeof value === 'number') return value
             if (!value.startsWith('=')) return value
 
             const formula = value.slice(1) 
