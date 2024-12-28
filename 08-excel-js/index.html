@@ -65,6 +65,14 @@
                 opacity: 1;
             }
         }
+
+        .selected {
+            background: rgb(174, 223, 255);
+        }
+
+        th.selected {
+            background: rgb(146, 223, 255);
+        }
         
     </style>
     <script type="module">
@@ -80,6 +88,8 @@
 
         const range = length => Array.from({ length }, (_, i) => i) // rango facilmente iterable
         const getColumn = i => String.fromCharCode(65 + i)
+
+        let selectedColumn = null
 
         let STATE = range(COLUMNS)
         .map(i => range(ROWS).map(j => ({ computedValue: 0, value: 0 })))
@@ -187,6 +197,30 @@
 
                 updateCell({ x, y, value: input.value })
             }, { once: true }) // { once: true } para que solo se ejecute una vez
+        })
+
+        $thead.addEventListener('click', e => {
+            const th = e.target.closest('th')
+            if (!th) return
+
+            // como saber cual es el indice de la columna seleccionada
+            const x = [...th.parentElement.children].indexOf(th)
+            if (x <= 0) return
+
+            selectedColumn = x - 1
+
+            $$('th').forEach(th => th.classList.remove('selected'))
+            th.classList.add('selected')
+            $$(`tr td:nth-child(${x + 1})`).forEach(el => el.classList.add('selected'))
+        })
+
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Backspace' && selectedColumn !== null) {
+                range(ROWS).forEach(row => {
+                    updateCell({ x: selectedColumn, y: row, value: ''})
+                })
+                renderSpreadSheet()
+            }
         })
 
         renderSpreadSheet()
