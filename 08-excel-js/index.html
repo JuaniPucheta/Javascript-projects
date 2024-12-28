@@ -188,6 +188,9 @@
             input.setSelectionRange(0, end) // si fuese (end, end) el cursor se pone al final
             input.focus()
 
+            $$('selected').forEach(el => el.classList.remove('selected'))
+            selectedColumn = null
+
             input.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') input.blur()
             })
@@ -231,6 +234,18 @@
 
                 event.clipboardData.setData('text/plain', columnValues.join('\n'))
                 event.preventDefault()
+            }
+        })
+
+        document.addEventListener('click', event => {
+            const { target } = event
+
+            const isThClicked = target.closest('th')
+            const isTdClicked = target.closest('td')
+
+            if (!isThClicked && !isTdClicked) {
+                $$('selected').forEach(el => el.classList.remove('selected'))
+                selectedColumn = null
             }
         })
 
