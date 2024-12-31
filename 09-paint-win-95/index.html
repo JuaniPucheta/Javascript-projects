@@ -46,14 +46,13 @@
         padding: 2px;
 
         button {
-            border: 0;
-            background: transparent;
+          border: 0;
+          background: transparent;
 
-            &:hover {
-                box-shadow: 1px 1px rgba(0, 0, 0, .3),
-                inset -1px -1px gray,
-                inset 1px 1px white;
-            }
+          &:hover {
+            box-shadow: 1px 1px rgba(0, 0, 0, 0.3), inset -1px -1px gray,
+              inset 1px 1px white;
+          }
         }
       }
 
@@ -69,13 +68,76 @@
       #container {
         border: 1px solid #808080;
       }
-
     </style>
     <script type="module">
-        const $ = selector => document.querySelector(selector)
-        const $$ = selector => document.querySelectorAll(selector)
+      // constantes
+      const MODES = {
+        draw: 'draw',
+        erase: 'erase',
+        rectangle: 'rectangle',
+        ellipsis: 'ellipsis',
+        picker: 'picker',
+      }
 
+      // utilities
+      const $ = (selector) => document.querySelector(selector)
+      const $$ = (selector) => document.querySelectorAll(selector)
 
+      // elementos
+      const $canvas = $('#canvas')
+
+      const ctx = $canvas.getContext('2d')
+
+      // estados
+      let isDrawing = false
+      let startX, startY
+      let lastX = 0
+      let lastY = 0
+      let mode = MODES.draw
+
+      // eventos
+      $canvas.addEventListener('mousedown', startDrawing)
+      $canvas.addEventListener('mousemove', draw)
+      $canvas.addEventListener('mouseup', stopDrawing)
+      $canvas.addEventListener('mouseleave', stopDrawing)
+
+      // metodos
+      function startDrawing(event) {
+        isDrawing = true
+
+        const { offsetX, offsetY } = event
+
+        // guardando las coordenadas iniciales
+        ;[startX, startY] = [offsetX, offsetY]
+        ;[lastX, lastY] = [offsetX, offsetY]
+        // necesita tener ;, siempre que se empiece por [] o ()
+
+        console.log({ startX, startY })
+      }
+
+      function draw(event) {
+        if (!isDrawing) return
+
+        const { offsetX, offsetY } = event
+
+        // comenzar un trazado
+        ctx.beginPath()
+
+        // mover el trazado a las coordenadas actuales
+        ctx.moveTo(lastX, lastY)
+
+        // dibujar una linea entre coordenadas actuales y las nuevas
+        ctx.lineTo(offsetX, offsetY)
+
+        ctx.stroke()
+
+        // actualizar las ultimas coordenadas
+        ;[lastX, lastY] = [offsetX, offsetY]
+      }
+
+      function stopDrawing(event) {
+        isDrawing = false
+      }
     </script>
   </head>
 
@@ -87,22 +149,21 @@
 
     <div id="container">
       <header>
-          <button>File</button>
-          <button>Edit</button>
-          <button>View</button>
-          <button>Image</button>
-          <button>Colors</button>
-          <button>Help</button>
+        <button>File</button>
+        <button>Edit</button>
+        <button>View</button>
+        <button>Image</button>
+        <button>Colors</button>
+        <button>Help</button>
       </header>
-  
+
       <main>
-          <canvas id="canvas" width="300" height="300"></canvas>
+        <canvas id="canvas" width="300" height="300"></canvas>
       </main>
-  
+
       <footer>
-          <input type="color" id="color-picker" value="#000" />
+        <input type="color" id="color-picker" value="#000" />
       </footer>
     </div>
-
   </body>
 </html>
