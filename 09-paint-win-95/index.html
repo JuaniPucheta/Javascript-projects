@@ -70,7 +70,7 @@
       }
     </style>
     <script type="module">
-      // constantes
+      // CONSTANTES
       const MODES = {
         draw: 'draw',
         erase: 'erase',
@@ -79,29 +79,31 @@
         picker: 'picker',
       }
 
-      // utilities
+      // UTILIDADES
       const $ = (selector) => document.querySelector(selector)
       const $$ = (selector) => document.querySelectorAll(selector)
 
-      // elementos
+      // ELEMENTOS
       const $canvas = $('#canvas')
-
+      const $colorPicker = $('#color-picker')
       const ctx = $canvas.getContext('2d')
 
-      // estados
+      // ESTADOS
       let isDrawing = false
       let startX, startY
       let lastX = 0
       let lastY = 0
       let mode = MODES.draw
 
-      // eventos
+      // EVENTOS
       $canvas.addEventListener('mousedown', startDrawing)
       $canvas.addEventListener('mousemove', draw)
       $canvas.addEventListener('mouseup', stopDrawing)
       $canvas.addEventListener('mouseleave', stopDrawing)
 
-      // metodos
+      $colorPicker.addEventListener('change', changeColor)
+
+      // METODOS
       function startDrawing(event) {
         isDrawing = true
 
@@ -137,6 +139,10 @@
 
       function stopDrawing(event) {
         isDrawing = false
+      }
+
+      function changeColor() {
+        ctx.strokeStyle = $colorPicker.value
       }
     </script>
   </head>
