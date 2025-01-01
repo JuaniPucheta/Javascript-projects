@@ -149,6 +149,7 @@
       // ELEMENTOS
       const $canvas = $('#canvas')
       const $colorPicker = $('#color-picker')
+      const $clearBtn = $('#clear-btn')
       const ctx = $canvas.getContext('2d')
 
       // ESTADOS
@@ -165,6 +166,7 @@
       $canvas.addEventListener('mouseleave', stopDrawing)
 
       $colorPicker.addEventListener('change', changeColor)
+      $clearBtn.addEventListener('click', clearCanvas)
 
       // METODOS
       function startDrawing(event) {
@@ -206,6 +208,10 @@
 
       function changeColor() {
         ctx.strokeStyle = $colorPicker.value
+      }
+    
+      function clearCanvas() {
+        ctx.clearRect(0, 0, $canvas.width, $canvas.height)
       }
     </script>
   </head>
