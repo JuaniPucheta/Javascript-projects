@@ -159,6 +159,7 @@
       const $rectangleBtn = $('#rectangle-btn')
       const $eraseBtn = $('#erase-btn')
       const $pickerBtn = $('#picker-btn')
+      const $ellipseBtn = $('#ellipse-btn')
 
       const ctx = $canvas.getContext('2d')
 
@@ -197,6 +198,10 @@
 
       $eraseBtn.addEventListener('click', () => {
         setMode(MODES.erase)
+      })
+
+      $ellipseBtn.addEventListener('click', () => {
+        setMode(MODES.ellipsis)
       })
 
       // METODOS
@@ -258,6 +263,37 @@
           ctx.beginPath()
           ctx.rect(startX, startY, width, height)
           ctx.stroke()
+          return
+        }
+
+        if (mode === MODES.ellipsis) {
+          ctx.putImageData(imageData, 0, 0)
+
+          let width = offsetX - startX
+          let height = offsetY - startY
+
+          if (isShiftPressed) {
+            const sideLength = Math.min(
+              Math.abs(width),
+              Math.abs(height)
+            )
+
+            width = width < 0 ? -sideLength : sideLength
+            height = height < 0 ? -sideLength : sideLength
+          }
+
+          ctx.beginPath()
+          ctx.ellipse(
+            startX + width / 2,
+            startY + height / 2,
+            Math.abs(width / 2),
+            Math.abs(height / 2),
+            0,
+            0,
+            2 * Math.PI
+          )
+          ctx.stroke()
+
           return
         }
       }
@@ -322,6 +358,15 @@
             console.error(e)
           }
 
+          return
+        }
+
+        if (mode === MODES.ellipsis) {
+          $ellipseBtn.classList.add('active')
+          canvas.style.cursor = 'move'
+
+          ctx.globalCompositeOperation = 'source-over'
+          ctx.lineWidth = 2
           return
         }
       }
