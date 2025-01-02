@@ -164,6 +164,7 @@
 
       // ESTADOS
       let isDrawing = false
+      let isShiftPressed = false
       let startX, startY
       let lastX = 0
       let lastY = 0
@@ -178,6 +179,9 @@
 
       $colorPicker.addEventListener('change', changeColor)
       $clearBtn.addEventListener('click', clearCanvas)
+
+      document.addEventListener('keydown', handleKeyDown)
+      document.addEventListener('keyup', handleKeyUp)
 
       $pickerBtn.addEventListener('click', () => {
         setMode(MODES.picker)
@@ -238,8 +242,18 @@
           ctx.putImageData(imageData, 0, 0)
 
           // coordenada inicial del click -> startX ; offsetX es la posicion actual del mouse
-          const width = offsetX - startX
-          const height = offsetY - startY
+          let width = offsetX - startX
+          let height = offsetY - startY
+
+          if (isShiftPressed) {
+            const sideLength = Math.min(
+              Math.abs(width),
+              Math.abs(height)
+            )
+
+            width = width < 0 ? -sideLength : sideLength
+            height = height < 0 ? -sideLength : sideLength
+          }
 
           ctx.beginPath()
           ctx.rect(startX, startY, width, height)
@@ -310,6 +324,14 @@
 
           return
         }
+      }
+
+      function handleKeyDown({ key }) {
+        isShiftPressed = key === 'Shift'
+      }
+
+      function handleKeyUp({ key }) {
+        isShiftPressed = key !== 'Shift'
       }
 
       // init
