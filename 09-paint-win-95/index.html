@@ -108,6 +108,11 @@
             border-right-color: #eee;
             border-bottom-color: #eee;
           }
+
+          &[disabled] {
+            pointer-events: none;
+            opacity: 0.5;
+          }
         }
       }
 
@@ -153,6 +158,7 @@
       const $drawBtn = $('#draw-btn')
       const $rectangleBtn = $('#rectangle-btn')
       const $eraseBtn = $('#erase-btn')
+      const $pickerBtn = $('#picker-btn')
 
       const ctx = $canvas.getContext('2d')
 
@@ -172,6 +178,10 @@
 
       $colorPicker.addEventListener('change', changeColor)
       $clearBtn.addEventListener('click', clearCanvas)
+
+      $pickerBtn.addEventListener('click', () => {
+        setMode(MODES.picker)
+      })
 
       $rectangleBtn.addEventListener('click', () => {
         setMode(MODES.rectangle)
@@ -279,10 +289,24 @@
           ctx.lineWidth = 10
           return
         }
+
+        if (mode === MODES.picker) {
+          $pickerBtn.classList.add('active')
+          canvas.style.cursor = 'url("./cursors/picker.png") 0 24, auto'
+
+          // api solo disponible en chrome -> eyedropper
+
+          return
+        }
       }
 
       // init
       setMode(MODES.draw)
+
+      // mostrar picker si el navegador lo soporta
+      if (typeof window.EyeDropper !== 'undefined') {
+        $pickerBtn.removeAttribute('disabled')
+      }
     </script>
   </head>
 
@@ -308,7 +332,7 @@
           <button id="erase-btn" title="Borrar"></button>
           <button id="rectangle-btn" title="Rectangulo"></button>
           <button id="ellipse-btn" title="Elipse"></button>
-          <button id="picker-btn" title="Capturar color"></button>
+          <button disabled id="picker-btn" title="Capturar color"></button>
           <button id="clear-btn" title="Limpiar dibujo"></button>
         </nav>
       </aside>
