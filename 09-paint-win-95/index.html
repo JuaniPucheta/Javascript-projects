@@ -115,11 +115,11 @@
         background-image: url('./icons/erase.png');
       }
 
-      #rectangle {
+      #rectangle-btn {
         background-image: url('./icons/rectangle.png');
       }
 
-      #ellipse {
+      #ellipse-btn {
         background-image: url('./icons/ellipse.png');
       }
 
@@ -150,6 +150,9 @@
       const $canvas = $('#canvas')
       const $colorPicker = $('#color-picker')
       const $clearBtn = $('#clear-btn')
+      const $drawBtn = $('#draw-btn')
+      const $rectangleBtn = $('#rectangle-btn')
+
       const ctx = $canvas.getContext('2d')
 
       // ESTADOS
@@ -158,6 +161,7 @@
       let lastX = 0
       let lastY = 0
       let mode = MODES.draw
+      let imageData
 
       // EVENTOS
       $canvas.addEventListener('mousedown', startDrawing)
@@ -167,6 +171,14 @@
 
       $colorPicker.addEventListener('change', changeColor)
       $clearBtn.addEventListener('click', clearCanvas)
+
+      $rectangleBtn.addEventListener('click', () => {
+        setMode(MODES.rectangle)
+      })
+
+      $drawBtn.addEventListener('click', () => {
+        setMode(MODES.draw)
+      })
 
       // METODOS
       function startDrawing(event) {
@@ -179,7 +191,8 @@
         ;[lastX, lastY] = [offsetX, offsetY]
         // necesita tener ;, siempre que se empiece por [] o ()
 
-        console.log({ startX, startY })
+        // foto cuando empezamos a dibujar
+        imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
       }
 
       function draw(event) {
@@ -187,19 +200,36 @@
 
         const { offsetX, offsetY } = event
 
-        // comenzar un trazado
-        ctx.beginPath()
+        if (mode === MODES.draw) {
+          // comenzar un trazado
+          ctx.beginPath()
+  
+          // mover el trazado a las coordenadas actuales
+          ctx.moveTo(lastX, lastY)
+  
+          // dibujar una linea entre coordenadas actuales y las nuevas
+          ctx.lineTo(offsetX, offsetY)
+  
+          ctx.stroke()
+  
+          // actualizar las ultimas coordenadas
+          ;[lastX, lastY] = [offsetX, offsetY]
+          
+          return
+        }
 
-        // mover el trazado a las coordenadas actuales
-        ctx.moveTo(lastX, lastY)
+        if (mode === MODES.rectangle) {
+          // recupero la imagen del principio del dibujo. Evito que se dibuje el rectangulo en cada movimiento del mouse
+          ctx.putImageData(imageData, 0, 0);
+          
+          // coordenada inicial del click -> startX ; offsetX es la posicion actual del mouse
+          const width = offsetX - startX
+          const height = offsetY - startY
 
-        // dibujar una linea entre coordenadas actuales y las nuevas
-        ctx.lineTo(offsetX, offsetY)
-
-        ctx.stroke()
-
-        // actualizar las ultimas coordenadas
-        ;[lastX, lastY] = [offsetX, offsetY]
+          ctx.beginPath()
+          ctx.rect(startX, startY, width, height)
+          ctx.stroke()
+        }
       }
 
       function stopDrawing(event) {
@@ -209,9 +239,30 @@
       function changeColor() {
         ctx.strokeStyle = $colorPicker.value
       }
-    
+
       function clearCanvas() {
         ctx.clearRect(0, 0, $canvas.width, $canvas.height)
+      }
+
+      function setMode(newMode) {
+        mode = newMode
+
+        // para limpiar el btn activo actual
+        $('button.active')?.classList.remove('active')
+
+        if (mode === MODES.draw) {
+          $drawBtn.classList.add('active')
+          canvas.style.cursor = 'crosshair'
+          ctx.lineWidth = 2
+          return
+        } 
+        
+        if (mode === MODES.rectangle) {
+          $rectangleBtn.classList.add('active')
+          canvas.style.cursor = 'nw-resize'
+          ctx.lineWidth = 2
+          return
+        }
       }
     </script>
   </head>
@@ -236,8 +287,8 @@
         <nav>
           <button class="active" id="draw-btn" title="Pincel"></button>
           <button id="erase-btn" title="Borrar"></button>
-          <button id="rectangle" title="Rectangulo"></button>
-          <button id="ellipse" title="Elipse"></button>
+          <button id="rectangle-btn" title="Rectangulo"></button>
+          <button id="ellipse-btn" title="Elipse"></button>
           <button id="picker-btn" title="Capturar color"></button>
           <button id="clear-btn" title="Limpiar dibujo"></button>
         </nav>
