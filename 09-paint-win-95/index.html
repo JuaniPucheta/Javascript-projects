@@ -260,7 +260,8 @@
         ctx.clearRect(0, 0, $canvas.width, $canvas.height)
       }
 
-      function setMode(newMode) {
+      async function setMode(newMode) {
+        let previousMode = mode
         mode = newMode
 
         // para limpiar el btn activo actual
@@ -294,7 +295,18 @@
           $pickerBtn.classList.add('active')
           canvas.style.cursor = 'url("./cursors/picker.png") 0 24, auto'
 
-          // api solo disponible en chrome -> eyedropper
+          const eyeDropper = new EyeDropper()
+
+          try {
+            const result = await eyeDropper.open() // recupera en hexadecimal
+            const { sRGBHex } = result
+            ctx.strokeStyle = sRGBHex
+            $colorPicker.value = sRGBHex
+            setMode(previousMode)
+          } catch (e) {
+            // si ha habido un error o el usuario no recupero el color
+            console.error(e)
+          }
 
           return
         }
