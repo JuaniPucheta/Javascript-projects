@@ -73,7 +73,6 @@ export const PROJECTS = [
   },
   {
     slug: "08-excel-js",
-    hidden: false,
     title: "Hojas de Cálculo JS",
     description: "¡Excel sin dependencias y funcional!",
     learnings: [
@@ -81,6 +80,18 @@ export const PROJECTS = [
       "Eval",
       "Structured Clone",
       "Eventos de teclado"
+    ],
+  },
+  {
+    slug: "09-paint-win-95",
+    hidden: false,
+    title: "Paint Windows 95",
+    description: "¡El clásico Paint de Windows 95!",
+    learnings: [
+      "Canvas",
+      "Picker",
+      "Eventos de teclado",
+      "Exportar imagen"
     ],
     theme: {
       isDark: false
