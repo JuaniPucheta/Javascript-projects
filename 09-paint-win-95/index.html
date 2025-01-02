@@ -136,6 +136,11 @@
         background-image: url('./icons/trash.png');
         background-size: 22px;
       }
+
+      #save-btn {
+        background-image: url('./icons/save.png');
+        background-size: 22px;
+      }
     </style>
     <script type="module">
       // CONSTANTES
@@ -145,6 +150,7 @@
         rectangle: 'rectangle',
         ellipsis: 'ellipsis',
         picker: 'picker',
+        save: 'save',
       }
 
       // UTILIDADES
@@ -160,6 +166,7 @@
       const $eraseBtn = $('#erase-btn')
       const $pickerBtn = $('#picker-btn')
       const $ellipseBtn = $('#ellipse-btn')
+      const $saveBtn = $('#save-btn')
 
       const ctx = $canvas.getContext('2d')
 
@@ -181,9 +188,6 @@
       $colorPicker.addEventListener('change', changeColor)
       $clearBtn.addEventListener('click', clearCanvas)
 
-      document.addEventListener('keydown', handleKeyDown)
-      document.addEventListener('keyup', handleKeyUp)
-
       $pickerBtn.addEventListener('click', () => {
         setMode(MODES.picker)
       })
@@ -191,18 +195,25 @@
       $rectangleBtn.addEventListener('click', () => {
         setMode(MODES.rectangle)
       })
-
+      
       $drawBtn.addEventListener('click', () => {
         setMode(MODES.draw)
       })
-
+      
       $eraseBtn.addEventListener('click', () => {
         setMode(MODES.erase)
       })
-
+      
       $ellipseBtn.addEventListener('click', () => {
         setMode(MODES.ellipsis)
       })
+
+      $saveBtn.addEventListener('click', () => {
+        setMode(MODES.save)
+      })
+      
+      document.addEventListener('keydown', handleKeyDown)
+      document.addEventListener('keyup', handleKeyUp)
 
       // METODOS
       function startDrawing(event) {
@@ -369,6 +380,24 @@
           ctx.lineWidth = 2
           return
         }
+
+        if (mode === MODES.save) {
+          $saveBtn.classList.add('active')
+          canvas.style.cursor = 'pointer'
+
+          ctx.globalCompositeOperation='destination-over';
+          ctx.fillStyle = 'white';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          const dataUrl = canvas.toDataURL()
+          const a = document.createElement('a')
+          a.href = dataUrl
+          a.download = 'dibujo.png'
+          a.click()
+
+          setMode(previousMode)
+          return
+        }
       }
 
       function handleKeyDown({ key }) {
@@ -413,6 +442,7 @@
           <button id="ellipse-btn" title="Elipse"></button>
           <button disabled id="picker-btn" title="Capturar color"></button>
           <button id="clear-btn" title="Limpiar dibujo"></button>
+          <button id="save-btn" title="Guardar dibujo"></button>
         </nav>
       </aside>
 
