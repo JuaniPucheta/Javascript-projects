@@ -49,6 +49,23 @@
       let boxes = []
       let scrollCounter, cameraY, current, mode, xSpeed, ySpeed
 
+      function createStepColor(step) {
+        if (step === 0) return 'white'
+
+        const red = Math.floor(Math.random() * 255)
+        const green = Math.floor(Math.random() * 255)
+        const blue = Math.floor(Math.random() * 255)
+
+        return `rgb(${red}, ${green}, ${blue})`
+      }
+
+      function updateCamera() {
+        if (scrollCounter > 0) {
+          cameraY++
+          scrollCounter--
+        }
+      }
+
       function initializeGameState() {
         boxes = [
           {
@@ -86,6 +103,8 @@
           updateFallMode()
         }
 
+        updateCamera()
+
         window.requestAnimationFrame(draw)
       }
 
@@ -97,7 +116,7 @@
       function drawBoxes() {
         boxes.forEach((box) => {
           const { x, y, width, color } = box
-          const newY = INITIAL_BOX_Y - y
+          const newY = INITIAL_BOX_Y - y + cameraY
 
           ctx.fillStyle = color
           ctx.fillRect(x, newY, width, BOX_HEIGHT)
@@ -109,7 +128,7 @@
           x: 0,
           y: (current + 10) * BOX_HEIGHT,
           width: boxes[current - 1].width,
-          color: 'white',
+          color: createStepColor(current),
         }
       }
 
@@ -123,7 +142,10 @@
         const hasHitRightSide = currentBox.x + currentBox.width >= canvas.width
         const hasHitLeftSide = currentBox.x <= 0
 
-        if ((isMovingRight && hasHitRightSide) || (isMovingLeft && hasHitLeftSide)) {
+        if (
+          (isMovingRight && hasHitRightSide) ||
+          (isMovingLeft && hasHitLeftSide)
+        ) {
           xSpeed = -xSpeed
         }
       }
@@ -142,11 +164,27 @@
         const positionPreviousBox = boxes[current - 1].y + BOX_HEIGHT
 
         if (currentBox.y === positionPreviousBox) {
-          currentBox.y = positionPreviousBox
-          current++
-          createNewBox()
-          mode = MODES.BOUNCE
+          handleBoxLanding()
         }
+      }
+
+      function handleBoxLanding() {
+        const currentBox = boxes[current]
+        const previousBox = boxes[current - 1]
+
+        const difference = currentBox.x - previousBox.x
+
+        if (Math.abs(difference) >= currentBox.width) {
+          mode = MODES.GAMEOVER
+          return
+        }
+
+        xSpeed += xSpeed > 0 ? 0.1 : -0.1
+        current++ // incrementamos el contador de cajas
+        scrollCounter = BOX_HEIGHT
+        mode = MODES.BOUNCE
+
+        createNewBox()
       }
 
       restart()
