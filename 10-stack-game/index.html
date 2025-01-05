@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stack Game 2D</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        background: #000;
+        margin: 0;
+        display: grid;
+        place-content: center;
+        height: 100vh;
+      }
+
+      canvas {
+        border: 1px solid #eee;
+      }
+    </style>
+
+    <script type="module">
+      const $ = (el) => document.querySelector(el)
+      const $$ = (el) => document.querySelectorAll(el)
+
+      const canvas = $('#canvas')
+      const ctx = canvas.getContext('2d')
+
+      // CONSTANTES
+      const MODES = {
+        FALL: 'fall',
+        BOUNCE: 'bounce',
+        GAMEOVER: 'gameover',
+      }
+
+      const INITIAL_BOX_WIDTH = 200
+      const INITIAL_BOX_Y = 600
+
+      const BOX_HEIGHT = 50
+      const INITIAL_Y_SPEED = 5
+      const INITIAL_X_SPEED = 2
+
+      // ESTADOS
+      let boxes = []
+      let scrollCounter, cameraY, current, mode, xSpeed, ySpeed
+
+      function initializeGameState() {
+        boxes = [
+          {
+            x: canvas.width / 2 - INITIAL_BOX_WIDTH / 2, // conseguimos que el cuadro se centre. Logica clave para el juego
+            y: 200,
+            width: INITIAL_BOX_WIDTH,
+            color: 'white',
+          },
+        ]
+
+        current = 1
+        mode = MODES.BOUNCE
+        xSpeed = INITIAL_X_SPEED
+        ySpeed = INITIAL_Y_SPEED
+        scrollCounter = 0
+        cameraY = 0
+
+        createNewBox()
+      }
+
+      function restart() {
+        initializeGameState()
+        draw()
+      }
+
+      function draw() {
+        if (mode === MODES.GAMEOVER) return
+
+        drawBackground()
+        drawBoxes()
+
+        if (mode === MODES.BOUNCE) {
+          moveAndDetectCollision()
+        } else if (mode === MODES.FALL) {
+          updateFallMode()
+        }
+
+        window.requestAnimationFrame(draw)
+      }
+
+      function drawBackground() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+      }
+
+      function drawBoxes() {
+        boxes.forEach((box) => {
+          const { x, y, width, color } = box
+          const newY = INITIAL_BOX_Y - y
+
+          ctx.fillStyle = color
+          ctx.fillRect(x, newY, width, BOX_HEIGHT)
+        })
+      }
+
+      function createNewBox() {
+        boxes[current] = {
+          x: 0,
+          y: (current + 10) * BOX_HEIGHT,
+          width: boxes[current - 1].width,
+          color: 'white',
+        }
+      }
+
+      function moveAndDetectCollision() {
+        const currentBox = boxes[current] // caja actual que se esta moviendo
+        currentBox.x += xSpeed
+
+        const isMovingRight = xSpeed > 0
+        const isMovingLeft = xSpeed < 0
+
+        const hasHitRightSide = currentBox.x + currentBox.width >= canvas.width
+        const hasHitLeftSide = currentBox.x <= 0
+
+        if ((isMovingRight && hasHitRightSide) || (isMovingLeft && hasHitLeftSide)) {
+          xSpeed = -xSpeed
+        }
+      }
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === ' ' && mode === MODES.BOUNCE) {
+          mode = MODES.FALL
+        }
+      })
+
+      function updateFallMode() {
+        const currentBox = boxes[current]
+        currentBox.y -= ySpeed
+
+        // recupero la posicion de la caja previa
+        const positionPreviousBox = boxes[current - 1].y + BOX_HEIGHT
+
+        if (currentBox.y === positionPreviousBox) {
+          currentBox.y = positionPreviousBox
+          current++
+          createNewBox()
+          mode = MODES.BOUNCE
+        }
+      }
+
+      restart()
+    </script>
+  </head>
+  <body>
+    <canvas id="canvas" width="320" height="500"></canvas>
+  </body>
+</html>
