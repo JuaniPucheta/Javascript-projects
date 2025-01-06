@@ -168,6 +168,18 @@
         }
       }
 
+      function adjustCurrentBox(difference) {
+        const currentBox = boxes[current]
+        const previousBox = boxes[current - 1]
+
+        if (currentBox.x > previousBox.x) {
+          currentBox.width -= difference
+        } else {
+          currentBox.width += difference
+          currentBox.x = previousBox.x
+        }
+      }
+
       function handleBoxLanding() {
         const currentBox = boxes[current]
         const previousBox = boxes[current - 1]
@@ -179,6 +191,7 @@
           return
         }
 
+        adjustCurrentBox(difference)
         xSpeed += xSpeed > 0 ? 0.1 : -0.1
         current++ // incrementamos el contador de cajas
         scrollCounter = BOX_HEIGHT
