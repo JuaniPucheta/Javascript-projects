@@ -84,7 +84,6 @@ export const PROJECTS = [
   },
   {
     slug: "09-paint-win-95",
-    hidden: false,
     title: "Paint Windows 95",
     description: "¡El clásico Paint de Windows 95!",
     learnings: [
@@ -92,6 +91,17 @@ export const PROJECTS = [
       "Picker",
       "Eventos de teclado",
       "Exportar imagen"
+    ],
+  },
+  {
+    slug: "10-stack-game",
+    hidden: false,
+    title: "Stack Game",
+    description: "¡Apila bloques y haz la torre más alta!",
+    learnings: [
+      "Canvas",
+      "Eventos de teclado",
+      "Lógica",
     ],
     theme: {
       isDark: false
