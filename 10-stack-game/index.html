@@ -12,15 +12,41 @@
       }
 
       body {
-        background: #000;
+        background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
         margin: 0;
-        display: grid;
-        place-content: center;
-        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        font-family: 'Arial', sans-serif;
+        overflow: hidden;
       }
 
       canvas {
-        border: 1px solid #eee;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        box-shadow: 0 0 20px rgba(76, 175, 80, 0.2);
+        backdrop-filter: blur(5px);
+      }
+
+      span {
+        color: #fff;
+        font-size: 20px;
+        font-weight: 500;
+        text-shadow: 0 0 5px #4caf50;
+        letter-spacing: 1px;
+        margin-bottom: 15px;
+        animation: softGlow 2s ease-in-out infinite alternate;
+      }
+
+      @keyframes softGlow {
+        from {
+          text-shadow: 0 0 2px #4caf50;
+        }
+        to {
+          text-shadow: 0 0 8px #4caf50, 0 0 12px #81c784;
+        }
       }
     </style>
 
@@ -30,6 +56,7 @@
 
       const canvas = $('#canvas')
       const ctx = canvas.getContext('2d')
+      const score = $('#score')
 
       // CONSTANTES
       const MODES = {
@@ -212,11 +239,7 @@
         ctx.font = 'bold 20px Arial'
         ctx.fillStyle = 'white'
         ctx.textAlign = 'center'
-        ctx.fillText(
-          'GAME OVER', 
-          canvas.width / 2, 
-          canvas.height / 2
-        )
+        ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2)
       }
 
       function handleBoxLanding() {
@@ -231,13 +254,14 @@
         }
 
         adjustCurrentBox(difference)
-
         createNewDebris(difference)
 
-        xSpeed += xSpeed > 0 ? 0.1 : -0.1
+        xSpeed += xSpeed > 0 ? 0.3 : -0.3
         current++ // incrementamos el contador de cajas
         scrollCounter = BOX_HEIGHT
         mode = MODES.BOUNCE
+
+        score.textContent = current - 1
 
         createNewBox()
       }
@@ -260,6 +284,7 @@
     </script>
   </head>
   <body>
+    <span>Puntuación: <span id="score">0</span></span>
     <canvas id="canvas" width="320" height="500"></canvas>
   </body>
 </html>
