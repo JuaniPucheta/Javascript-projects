@@ -48,6 +48,7 @@
       // ESTADOS
       let boxes = []
       let scrollCounter, cameraY, current, mode, xSpeed, ySpeed
+      let debris = { x: 0, y: 0, width: 0 }
 
       function createStepColor(step) {
         if (step === 0) return 'white'
@@ -76,6 +77,7 @@
           },
         ]
 
+        debris = { x: 0, y: 0, width: 0 }
         current = 1
         mode = MODES.BOUNCE
         xSpeed = INITIAL_X_SPEED
@@ -96,6 +98,7 @@
 
         drawBackground()
         drawBoxes()
+        drawDebris()
 
         if (mode === MODES.BOUNCE) {
           moveAndDetectCollision()
@@ -103,6 +106,7 @@
           updateFallMode()
         }
 
+        debris.y -= ySpeed
         updateCamera()
 
         window.requestAnimationFrame(draw)
@@ -111,6 +115,14 @@
       function drawBackground() {
         ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
         ctx.fillRect(0, 0, canvas.width, canvas.height)
+      }
+
+      function drawDebris() {
+        const { x, y, width } = debris
+        const newY = INITIAL_BOX_Y - y + cameraY
+
+        ctx.fillStyle = 'red'
+        ctx.fillRect(x, newY, width, BOX_HEIGHT)
       }
 
       function drawBoxes() {
@@ -150,12 +162,6 @@
         }
       }
 
-      document.addEventListener('keydown', (event) => {
-        if (event.key === ' ' && mode === MODES.BOUNCE) {
-          mode = MODES.FALL
-        }
-      })
-
       function updateFallMode() {
         const currentBox = boxes[current]
         currentBox.y -= ySpeed
@@ -180,6 +186,39 @@
         }
       }
 
+      function createNewDebris(difference) {
+        // debris significa 'escombros'
+        const currentBox = boxes[current]
+        const previousBox = boxes[current - 1]
+
+        const debrisX =
+          currentBox.x > previousBox.x
+            ? currentBox.x + currentBox.width
+            : currentBox.x
+
+        debris = {
+          x: debrisX,
+          y: currentBox.y,
+          width: difference,
+        }
+      }
+
+      function gameOver() {
+        mode = MODES.GAMEOVER
+
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+        ctx.font = 'bold 20px Arial'
+        ctx.fillStyle = 'white'
+        ctx.textAlign = 'center'
+        ctx.fillText(
+          'GAME OVER', 
+          canvas.width / 2, 
+          canvas.height / 2
+        )
+      }
+
       function handleBoxLanding() {
         const currentBox = boxes[current]
         const previousBox = boxes[current - 1]
@@ -187,17 +226,34 @@
         const difference = currentBox.x - previousBox.x
 
         if (Math.abs(difference) >= currentBox.width) {
-          mode = MODES.GAMEOVER
+          gameOver()
           return
         }
 
         adjustCurrentBox(difference)
+
+        createNewDebris(difference)
+
         xSpeed += xSpeed > 0 ? 0.1 : -0.1
         current++ // incrementamos el contador de cajas
         scrollCounter = BOX_HEIGHT
         mode = MODES.BOUNCE
 
         createNewBox()
+      }
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === ' ' && mode === MODES.BOUNCE) {
+          mode = MODES.FALL
+        }
+      })
+
+      canvas.onpointerdown = () => {
+        if (mode === MODES.GAMEOVER) {
+          restart()
+        } else if (mode === MODES.BOUNCE) {
+          mode = MODES.FALL
+        }
       }
 
       restart()
