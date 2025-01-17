@@ -124,21 +124,22 @@
 
         let result
         try {
-          result = eval(`async () => {
+          result = eval(`(async () => {
               let VAR__ops = 0;
               let VAR__start = Date.now();
               let VAR__end = VAR__start + ${duration};
               ${data};
-            
+
               while (Date.now() < VAR__end) {
                 ${code};
                 VAR__ops++;
               }
-  
+
               return VAR__ops
-            }()`)
+          })()`) // IIFE (Immediately Invoked Function Expression)
         } catch (e) {
           result = 0
+          console.error(e)
         }
 
         return result
@@ -148,17 +149,19 @@
         const $testCases = $$('.test-case')
         const globalCode = $globalCode.value
 
-        $testCases.forEach((testCase) => {
+        $testCases.forEach(async (testCase) => {
           const $code = testCase.querySelector('.code')
           const $ops = testCase.querySelector('.ops')
 
           const codeValue = $code.value
           $ops.textContent = 'Cargando...'
 
-          const result = runTest({
+          const result = await runTest({
             code: codeValue,
-            data: globalCode
+            data: globalCode,
           })
+
+          $ops.textContent = `${result.toLocaleString()} ops/s`
         })
       }
 
