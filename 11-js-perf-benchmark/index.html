@@ -120,29 +120,15 @@
       const $sendButton = $('.send-button')
 
       async function runTest({ code, data }) {
-        const duration = 1000 // -> 1 segundo
-
-        let result
-        try {
-          result = eval(`(async () => {
-              let VAR__ops = 0;
-              let VAR__start = Date.now();
-              let VAR__end = VAR__start + ${duration};
-              ${data};
-
-              while (Date.now() < VAR__end) {
-                ${code};
-                VAR__ops++;
-              }
-
-              return VAR__ops
-          })()`) // IIFE (Immediately Invoked Function Expression)
-        } catch (e) {
-          result = 0
-          console.error(e)
-        }
-
-        return result
+        const worker = new Worker('worker.js')
+        worker.postMessage({ code, data, duration: 1000 })
+       
+        return new Promise((resolve) => {
+          worker.onmessage = (event) => {
+            console.log('El worker dice: ', event.data)
+            resolve(event.data)
+          }
+        })  
       }
 
       async function runTestCases() {
