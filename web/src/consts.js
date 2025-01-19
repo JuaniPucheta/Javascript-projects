@@ -95,13 +95,23 @@ export const PROJECTS = [
   },
   {
     slug: "10-stack-game",
-    hidden: false,
     title: "Stack Game",
     description: "¡Apila bloques y haz la torre más alta!",
     learnings: [
       "Canvas",
       "Eventos de teclado",
       "Lógica",
+    ],
+  },
+  {
+    slug: "10-js-perf-benchmarl",
+    hidden: false,
+    title: "JS Benchmark",
+    description: "¡Benchmark de JavaScript!",
+    learnings: [
+      "Benchmark",
+      "Performance",
+      "Optimización",
     ],
     theme: {
       isDark: false

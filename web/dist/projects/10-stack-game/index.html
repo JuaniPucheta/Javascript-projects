@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stack Game 2D</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        background: linear-gradient(135deg, #1a1a1a, #0a0a0a);
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        font-family: 'Arial', sans-serif;
+        overflow: hidden;
+      }
+
+      canvas {
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        box-shadow: 0 0 20px rgba(76, 175, 80, 0.2);
+        backdrop-filter: blur(5px);
+      }
+
+      span {
+        color: #fff;
+        font-size: 20px;
+        font-weight: 500;
+        text-shadow: 0 0 5px #4caf50;
+        letter-spacing: 1px;
+        margin-bottom: 15px;
+        animation: softGlow 2s ease-in-out infinite alternate;
+      }
+
+      @keyframes softGlow {
+        from {
+          text-shadow: 0 0 2px #4caf50;
+        }
+        to {
+          text-shadow: 0 0 8px #4caf50, 0 0 12px #81c784;
+        }
+      }
+    </style>
+
+    <script type="module">
+      const $ = (el) => document.querySelector(el)
+      const $$ = (el) => document.querySelectorAll(el)
+
+      const canvas = $('#canvas')
+      const ctx = canvas.getContext('2d')
+      const score = $('#score')
+
+      // CONSTANTES
+      const MODES = {
+        FALL: 'fall',
+        BOUNCE: 'bounce',
+        GAMEOVER: 'gameover',
+      }
+
+      const INITIAL_BOX_WIDTH = 200
+      const INITIAL_BOX_Y = 600
+
+      const BOX_HEIGHT = 50
+      const INITIAL_Y_SPEED = 5
+      const INITIAL_X_SPEED = 2
+
+      // ESTADOS
+      let boxes = []
+      let scrollCounter, cameraY, current, mode, xSpeed, ySpeed
+      let debris = { x: 0, y: 0, width: 0 }
+
+      function createStepColor(step) {
+        if (step === 0) return 'white'
+
+        const red = Math.floor(Math.random() * 255)
+        const green = Math.floor(Math.random() * 255)
+        const blue = Math.floor(Math.random() * 255)
+
+        return `rgb(${red}, ${green}, ${blue})`
+      }
+
+      function updateCamera() {
+        if (scrollCounter > 0) {
+          cameraY++
+          scrollCounter--
+        }
+      }
+
+      function initializeGameState() {
+        boxes = [
+          {
+            x: canvas.width / 2 - INITIAL_BOX_WIDTH / 2, // conseguimos que el cuadro se centre. Logica clave para el juego
+            y: 200,
+            width: INITIAL_BOX_WIDTH,
+            color: 'white',
+          },
+        ]
+
+        debris = { x: 0, y: 0, width: 0 }
+        current = 1
+        mode = MODES.BOUNCE
+        xSpeed = INITIAL_X_SPEED
+        ySpeed = INITIAL_Y_SPEED
+        scrollCounter = 0
+        cameraY = 0
+
+        createNewBox()
+      }
+
+      function restart() {
+        initializeGameState()
+        draw()
+      }
+
+      function draw() {
+        if (mode === MODES.GAMEOVER) return
+
+        drawBackground()
+        drawBoxes()
+        drawDebris()
+
+        if (mode === MODES.BOUNCE) {
+          moveAndDetectCollision()
+        } else if (mode === MODES.FALL) {
+          updateFallMode()
+        }
+
+        debris.y -= ySpeed
+        updateCamera()
+
+        window.requestAnimationFrame(draw)
+      }
+
+      function drawBackground() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+      }
+
+      function drawDebris() {
+        const { x, y, width } = debris
+        const newY = INITIAL_BOX_Y - y + cameraY
+
+        ctx.fillStyle = 'red'
+        ctx.fillRect(x, newY, width, BOX_HEIGHT)
+      }
+
+      function drawBoxes() {
+        boxes.forEach((box) => {
+          const { x, y, width, color } = box
+          const newY = INITIAL_BOX_Y - y + cameraY
+
+          ctx.fillStyle = color
+          ctx.fillRect(x, newY, width, BOX_HEIGHT)
+        })
+      }
+
+      function createNewBox() {
+        boxes[current] = {
+          x: 0,
+          y: (current + 10) * BOX_HEIGHT,
+          width: boxes[current - 1].width,
+          color: createStepColor(current),
+        }
+      }
+
+      function moveAndDetectCollision() {
+        const currentBox = boxes[current] // caja actual que se esta moviendo
+        currentBox.x += xSpeed
+
+        const isMovingRight = xSpeed > 0
+        const isMovingLeft = xSpeed < 0
+
+        const hasHitRightSide = currentBox.x + currentBox.width >= canvas.width
+        const hasHitLeftSide = currentBox.x <= 0
+
+        if (
+          (isMovingRight && hasHitRightSide) ||
+          (isMovingLeft && hasHitLeftSide)
+        ) {
+          xSpeed = -xSpeed
+        }
+      }
+
+      function updateFallMode() {
+        const currentBox = boxes[current]
+        currentBox.y -= ySpeed
+
+        // recupero la posicion de la caja previa
+        const positionPreviousBox = boxes[current - 1].y + BOX_HEIGHT
+
+        if (currentBox.y === positionPreviousBox) {
+          handleBoxLanding()
+        }
+      }
+
+      function adjustCurrentBox(difference) {
+        const currentBox = boxes[current]
+        const previousBox = boxes[current - 1]
+
+        if (currentBox.x > previousBox.x) {
+          currentBox.width -= difference
+        } else {
+          currentBox.width += difference
+          currentBox.x = previousBox.x
+        }
+      }
+
+      function createNewDebris(difference) {
+        // debris significa 'escombros'
+        const currentBox = boxes[current]
+        const previousBox = boxes[current - 1]
+
+        const debrisX =
+          currentBox.x > previousBox.x
+            ? currentBox.x + currentBox.width
+            : currentBox.x
+
+        debris = {
+          x: debrisX,
+          y: currentBox.y,
+          width: difference,
+        }
+      }
+
+      function gameOver() {
+        mode = MODES.GAMEOVER
+
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+        ctx.font = 'bold 20px Arial'
+        ctx.fillStyle = 'white'
+        ctx.textAlign = 'center'
+        ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2)
+      }
+
+      function handleBoxLanding() {
+        const currentBox = boxes[current]
+        const previousBox = boxes[current - 1]
+
+        const difference = currentBox.x - previousBox.x
+
+        if (Math.abs(difference) >= currentBox.width) {
+          gameOver()
+          return
+        }
+
+        adjustCurrentBox(difference)
+        createNewDebris(difference)
+
+        xSpeed += xSpeed > 0 ? 0.3 : -0.3
+        current++ // incrementamos el contador de cajas
+        scrollCounter = BOX_HEIGHT
+        mode = MODES.BOUNCE
+
+        score.textContent = current - 1
+
+        createNewBox()
+      }
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === ' ' && mode === MODES.BOUNCE) {
+          mode = MODES.FALL
+        }
+      })
+
+      canvas.onpointerdown = () => {
+        if (mode === MODES.GAMEOVER) {
+          restart()
+        } else if (mode === MODES.BOUNCE) {
+          mode = MODES.FALL
+        }
+      }
+
+      restart()
+    </script>
+  </head>
+  <body>
+    <span>Puntuación: <span id="score">0</span></span>
+    <canvas id="canvas" width="320" height="500"></canvas>
+  </body>
+</html>
