@@ -3,7 +3,7 @@ onmessage = async event => {
 
     let result
     try {
-        result = eval(`(async () => {
+        result = await eval(`(async () => {
             let VAR__ops = 0;
             let VAR__start = Date.now();
             let VAR__end = VAR__start + ${duration};
