@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Moto Scroll</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background-color: #f1f1f1;
+      }
+
+      img {
+        width: 100vw;
+        height: 100dvh;
+        object-fit: cover;
+        position: fixed;
+      }
+
+      main {
+        height: 300dvh;
+      }
+
+      header {
+        background: linear-gradient(60deg, #ba3816, #a41705 40%);
+        width: 300px;
+        height: 300px;
+        border-radius: 1000px;
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translate(-50%);
+        z-index: 1;
+        margin-top: -230px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        animation-name: slideInDown;
+        animation-duration: 800ms;
+        animation-timing-function: ease-out;
+
+        img {
+          width: 150px;
+          margin: 0 auto;
+          height: auto;
+          margin-bottom: 30px;
+        }
+      }
+
+      @keyframes slideInDown {
+        from {
+          transform: translate3d(-50%, -100%, 0);
+          opacity: 0;
+        }
+
+        to {
+          transform: translate3d(-50%, 0, 0);
+          opacity: 1;
+        }
+      }
+    </style>
+    <script type="module">
+      const $ = (el) => document.querySelector(el)
+      const video = $('video')
+
+      window.addEventListener('scroll', () => {
+        const MAX_FRAMES = 22
+        // Altura maxima del scroll
+        const maxScroll =
+          document.documentElement.scrollHeight - window.innerHeight
+
+        // Posicion actual del scroll
+        const scrollPosition = window.scrollY
+
+        // Calcular el porcentaje de scroll
+        const scrollFraction = scrollPosition / maxScroll
+      })
+    </script>
+  </head>
+  <body>
+    <main>
+      <header>
+        <img src="logo.png" alt="Ichiban" />
+      </header>
+      <img src="frames/0.webp" alt="Primer frame" />
+    </main>
+  </body>
+</html>
