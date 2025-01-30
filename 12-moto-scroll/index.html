@@ -16,7 +16,7 @@
         background-color: #f1f1f1;
       }
 
-      img {
+      img { 
         width: 100vw;
         height: 100dvh;
         object-fit: cover;
@@ -70,29 +70,33 @@
 
       const $ = (el) => document.querySelector(el)
       const main = $('main')
-
+      // iniciar con la primera imagen
+      const img = document.createElement('img')
+      
       const MAX_FRAMES = 151
-
-      function updateImage (frame = 0) {
+      let currentFrame = 0
+      
+      function updateImage(frame = 0) {
         const src = images[frame].p
         img.src = src
       }
       
-      // iniciar con la primer imagen
-      const img = document.createElement('img')
       // append img to main
       main.appendChild(img)
-      updateImage()
+      updateImage(currentFrame)
 
       // Altura maxima del scroll
       let maxScroll = document.documentElement.scrollHeight - window.innerHeight
-
 
       window.addEventListener('resize', () => {
         maxScroll = document.documentElement.scrollHeight - window.innerHeight
       })
 
+      let lastFrameUpdate = 0
       window.addEventListener('scroll', () => {
+        if (Date.now() - lastFrameUpdate < 30) return true // 30ms
+        lastFrameUpdate = Date.now() // actualizo el contador
+
         // Posicion actual del scroll
         const scrollPosition = window.scrollY
 
@@ -102,8 +106,11 @@
         // Que frame le toca?
         const frame = Math.floor(scrollFraction * MAX_FRAMES)
 
-        // actualizar la imagen
-        updateImage(frame)
+        if (currentFrame !== frame) {
+          // actualizar la imagen
+          updateImage(frame)
+          currentFrame = frame
+        }
       })
     </script>
   </head>
