@@ -67,19 +67,30 @@
     </style>
     <script type="module">
       const $ = (el) => document.querySelector(el)
-      const video = $('video')
+      const img = $('#img')
+      const MAX_FRAMES = 100
+
+      // Altura maxima del scroll
+      let maxScroll = document.documentElement.scrollHeight - window.innerHeight
+
+      window.addEventListener('resize', () => {
+        maxScroll = document.documentElement.scrollHeight - window.innerHeight
+      })
 
       window.addEventListener('scroll', () => {
-        const MAX_FRAMES = 22
-        // Altura maxima del scroll
-        const maxScroll =
-          document.documentElement.scrollHeight - window.innerHeight
-
         // Posicion actual del scroll
         const scrollPosition = window.scrollY
 
         // Calcular el porcentaje de scroll
         const scrollFraction = scrollPosition / maxScroll
+
+        // Que frame le toca?
+        const frame = Math.floor(scrollFraction * MAX_FRAMES) || 1
+
+        const id = frame.toString().padStart(3, '0')
+        // --> frames-001.jpg
+
+        img.src = `frames/moto-${id}.webp`
       })
     </script>
   </head>
@@ -88,7 +99,7 @@
       <header>
         <img src="logo.png" alt="Ichiban" />
       </header>
-      <img src="frames/0.webp" alt="Primer frame" />
+      <img id="img" src="frames/0.webp" alt="Primer frame" />
     </main>
   </body>
 </html>
