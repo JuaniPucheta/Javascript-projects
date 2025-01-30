@@ -66,12 +66,27 @@
       }
     </style>
     <script type="module">
+      import { images } from './images.js'
+
       const $ = (el) => document.querySelector(el)
-      const img = $('#img')
-      const MAX_FRAMES = 100
+      const main = $('main')
+
+      const MAX_FRAMES = 151
+
+      function updateImage (frame = 0) {
+        const src = images[frame].p
+        img.src = src
+      }
+      
+      // iniciar con la primer imagen
+      const img = document.createElement('img')
+      // append img to main
+      main.appendChild(img)
+      updateImage()
 
       // Altura maxima del scroll
       let maxScroll = document.documentElement.scrollHeight - window.innerHeight
+
 
       window.addEventListener('resize', () => {
         maxScroll = document.documentElement.scrollHeight - window.innerHeight
@@ -85,12 +100,10 @@
         const scrollFraction = scrollPosition / maxScroll
 
         // Que frame le toca?
-        const frame = Math.floor(scrollFraction * MAX_FRAMES) || 1
+        const frame = Math.floor(scrollFraction * MAX_FRAMES)
 
-        const id = frame.toString().padStart(3, '0')
-        // --> frames-001.jpg
-
-        img.src = `frames/moto-${id}.webp`
+        // actualizar la imagen
+        updateImage(frame)
       })
     </script>
   </head>
@@ -99,7 +112,6 @@
       <header>
         <img src="logo.png" alt="Ichiban" />
       </header>
-      <img id="img" src="frames/0.webp" alt="Primer frame" />
     </main>
   </body>
 </html>
