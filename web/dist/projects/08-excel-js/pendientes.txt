@@ -1,3 +1,0 @@
-1. seleccionar toda una fila
-2. copiar fila/columna y pegar en otra fila/columna
-3. seleccionar fila/columna individualmente

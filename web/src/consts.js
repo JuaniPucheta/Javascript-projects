@@ -104,14 +104,25 @@ export const PROJECTS = [
     ],
   },
   {
-    slug: "10-js-perf-benchmarl",
-    hidden: false,
+    slug: "11-js-perf-benchmark",
     title: "JS Benchmark",
     description: "¡Benchmark de JavaScript!",
     learnings: [
       "Benchmark",
       "Performance",
       "Optimización",
+    ],
+  },
+  {
+    slug: "12-moto-scroll",
+    hidden: false,
+    title: "Moto Scroll",
+    description: "¡Scroll de motocicleta!",
+    learnings: [
+      "Scroll",
+      "Eventos de mouse",
+      "Animaciones",
+      "Performance"
     ],
     theme: {
       isDark: false
